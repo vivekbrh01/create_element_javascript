@@ -4,25 +4,32 @@ let movieInput = document.querySelector("input[type='text']");
 
 let cards = document.querySelector(".cards");
 
-function createElement(tag, props = {}, children) {
+function createElement(tag, props = {}, [...children]) {
 	let elm = document.createElement(tag);
-	elm.append(children);
+	console.log(Array.isArray(children));
+	children.forEach((c) => {
+		if (typeof c === "string") {
+			let childElement = document.createTextNode(c);
+			elm.append(childElement);
+		} else if (typeof c === "object") {
+			elm.append(c);
+		}
+	});
 	return elm;
 }
 
 function createUI(data = movieList, root = cards) {
 	root.innerHTML = "";
 	data.forEach((movie, index) => {
-		let li = createElement("li");
-		let p = createElement("p");
-		p.innerText = movie.name;
-		let button = createElement("button");
-		button.innerText = movie.isWatched ? "Watched" : "To Watch";
-		button.setAttribute("data-id", index);
-		let del = createElement("span");
-		del.setAttribute("data-id", index);
-		del.innerText = "X";
-		li.append(p, button, del);
+		let checked = movie.isWatched ? "Watched" : "To Watch";
+		
+		let p = createElement("p", null, movie.name);
+
+		let button = createElement("button", { "data-id": index }, checked);
+
+		let del = createElement("span", { "data-id": index }, "x");
+
+		let li = createElement("li", null, [p, button, del]);
 		cards.append(li);
 	});
 }
